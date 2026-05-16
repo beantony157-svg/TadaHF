@@ -1,416 +1,718 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Binary Search Game</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: { DEFAULT: '#1a56db', fg: '#ffffff' },
-          },
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-            mono: ['Menlo', 'monospace'],
-          },
-        },
-      },
-    };
-  </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <style>
-    * { box-sizing: border-box; }
-    body { font-family: 'Inter', system-ui, sans-serif; }
-    input[type=range] { accent-color: #1a56db; cursor: pointer; }
-    input[type=number]::-webkit-inner-spin-button,
-    input[type=number]::-webkit-outer-spin-button { opacity: 1; }
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Study List — May 16, 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e17;
+    --surface: #1a1828;
+    --card: #201e2e;
+    --border: #2e2b42;
+    --accent1: #ff6b6b;
+    --accent2: #ffd93d;
+    --accent3: #6bcb77;
+    --accent4: #4d96ff;
+    --accent5: #c77dff;
+    --text: #fffffe;
+    --muted: #a8a4c8;
+    --dim: #5c5882;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 40px 20px 80px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,107,107,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,107,107,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* glowing orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .orb1 { width: 400px; height: 400px; background: rgba(255,107,107,0.12); top: -100px; right: -100px; }
+  .orb2 { width: 300px; height: 300px; background: rgba(77,150,255,0.1); bottom: 100px; left: -80px; }
+  .orb3 { width: 200px; height: 200px; background: rgba(199,125,255,0.08); top: 50%; left: 50%; }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  .header {
+    margin-bottom: 40px;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .date-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    background: rgba(255,217,61,0.08);
+    border: 1px solid rgba(255,217,61,0.2);
+    padding: 6px 14px;
+    border-radius: 100px;
+    margin-bottom: 18px;
+  }
+
+  .date-tag::before { content: '●'; font-size: 8px; animation: pulse 2s infinite; }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 6vw, 52px);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  h1 span {
+    color: var(--accent1);
+    display: inline-block;
+    position: relative;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 10px;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+  }
+
+  /* MUST FINISH BANNER */
+  .must-finish {
+    background: linear-gradient(135deg, rgba(255,107,107,0.15), rgba(255,107,107,0.05));
+    border: 1px solid rgba(255,107,107,0.3);
+    border-left: 4px solid var(--accent1);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .must-finish .section-label { color: var(--accent1); }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.2;
+  }
+
+  .badge {
+    font-size: 9px;
+    padding: 3px 8px;
+    border-radius: 100px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    margin-left: 8px;
+  }
+
+  .badge-red { background: rgba(255,107,107,0.2); color: var(--accent1); border: 1px solid rgba(255,107,107,0.3); }
+  .badge-green { background: rgba(107,203,119,0.2); color: var(--accent3); border: 1px solid rgba(107,203,119,0.3); }
+  .badge-blue { background: rgba(77,150,255,0.2); color: var(--accent4); border: 1px solid rgba(77,150,255,0.3); }
+  .badge-yellow { background: rgba(255,217,61,0.2); color: var(--accent2); border: 1px solid rgba(255,217,61,0.3); }
+  .badge-purple { background: rgba(199,125,255,0.2); color: var(--accent5); border: 1px solid rgba(199,125,255,0.3); }
+
+  /* TASK ITEM */
+  .task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+
+  .task-item:last-child { border-bottom: none; }
+  .task-item:hover { padding-left: 4px; }
+
+  .checkbox {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    margin-top: 1px;
+    position: relative;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .task-item.done .checkbox {
+    background: var(--accent3);
+    border-color: var(--accent3);
+  }
+
+  .checkbox::after {
+    content: '✓';
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--bg);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .task-item.done .checkbox::after { opacity: 1; }
+
+  .task-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text);
+    font-weight: 400;
+    transition: all 0.25s ease;
+    flex: 1;
+  }
+
+  .task-item.done .task-text {
+    text-decoration: line-through;
+    color: var(--dim);
+  }
+
+  /* SUBJECT CARD */
+  .subject-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 16px;
+    animation: fadeUp 0.6s ease both;
+    transition: border-color 0.3s ease;
+  }
+
+  .subject-card:hover { border-color: var(--dim); }
+
+  .subject-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .subject-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .subject-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .subject-meta {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+  }
+
+  /* subject color themes */
+  .chem .checkbox { border-color: rgba(255,107,107,0.4); }
+  .chem .task-item.done .checkbox { background: var(--accent1); border-color: var(--accent1); }
+  .chem .subject-icon { background: rgba(255,107,107,0.12); }
+
+  .bangla .checkbox { border-color: rgba(255,217,61,0.4); }
+  .bangla .task-item.done .checkbox { background: var(--accent2); border-color: var(--accent2); }
+  .bangla .subject-icon { background: rgba(255,217,61,0.12); }
+
+  .bgs .checkbox { border-color: rgba(77,150,255,0.4); }
+  .bgs .task-item.done .checkbox { background: var(--accent4); border-color: var(--accent4); }
+  .bgs .subject-icon { background: rgba(77,150,255,0.12); }
+
+  .religion .checkbox { border-color: rgba(107,203,119,0.4); }
+  .religion .task-item.done .checkbox { background: var(--accent3); border-color: var(--accent3); }
+  .religion .subject-icon { background: rgba(107,203,119,0.12); }
+
+  .biology .checkbox { border-color: rgba(199,125,255,0.4); }
+  .biology .task-item.done .checkbox { background: var(--accent5); border-color: var(--accent5); }
+  .biology .subject-icon { background: rgba(199,125,255,0.12); }
+
+  /* ORDER SECTION */
+  .order-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 16px;
+    animation: fadeUp 0.6s 0.5s ease both;
+  }
+
+  .order-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .order-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .order-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .order-text { font-size: 14px; color: var(--text); }
+  .order-time { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); margin-left: auto; }
+
+  /* PROGRESS BAR */
+  .progress-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    animation: fadeUp 0.5s 0.05s ease both;
+  }
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 13px;
+  }
+
+  .progress-label { color: var(--muted); font-weight: 300; }
+  .progress-count { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--accent3); }
+
+  .progress-bar-bg {
+    height: 6px;
+    background: var(--surface);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent3), var(--accent4));
+    border-radius: 100px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+    width: 0%;
+  }
+
+  /* MOTIVATION */
+  .motivation {
+    text-align: center;
+    padding: 32px 24px;
+    animation: fadeUp 0.6s 0.6s ease both;
+  }
+
+  .motivation-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .motivation-text span { color: var(--accent2); }
+
+  /* ANIMATIONS */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* COPY BUTTON */
+  .copy-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: auto;
+  }
+
+  .copy-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); border-color: var(--dim); }
+
+  .header-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  /* weekly note */
+  .weekly-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+  .weekly-note::before { content: '💡'; font-size: 14px; flex-shrink: 0; }
+
+  /* delay helpers */
+  .d1 { animation-delay: 0.15s; }
+  .d2 { animation-delay: 0.25s; }
+  .d3 { animation-delay: 0.35s; }
+  .d4 { animation-delay: 0.45s; }
+</style>
 </head>
-<body class="bg-gray-50 min-h-screen text-gray-900">
-  <div id="root"></div>
+<body>
 
-  <script type="text/babel">
-    const { useState, useCallback, useEffect, useRef } = React;
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
 
-    function calcGuess(lo, hi) {
-      return Math.round((lo + hi) / 2);
-    }
-    function maxGuesses(range) {
-      return Math.ceil(Math.log2(range + 1));
-    }
+<div class="container">
 
-    function HintBadge({ hint }) {
-      if (hint === "higher")
-        return <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full">Higher →</span>;
-      if (hint === "lower")
-        return <span className="inline-flex items-center gap-1 bg-red-100 text-red-700 text-xs font-semibold px-2.5 py-1 rounded-full">← Lower</span>;
-      return <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full">Correct!</span>;
-    }
+  <!-- HEADER -->
+  <div class="header-row">
+    <div class="header">
+      <div class="date-tag">Friday · May 16, 2026</div>
+      <h1>Today's <span>Study</span><br>To-Do List</h1>
+      <p class="subtitle">Stay focused · One task at a time</p>
+    </div>
+    <button class="copy-btn" onclick="copyText()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      Copy
+    </button>
+  </div>
 
-    function Metric({ label, value, blue }) {
-      return (
-        <div className="bg-gray-100 rounded-lg px-3 py-2.5 text-center border border-gray-200">
-          <div className="text-xs text-gray-500 mb-1">{label}</div>
-          <div className={`text-xl font-bold tabular-nums ${blue ? 'text-blue-700' : 'text-gray-900'}`}>{value}</div>
-        </div>
-      );
-    }
+  <!-- PROGRESS -->
+  <div class="progress-section">
+    <div class="progress-header">
+      <span class="progress-label">Today's Progress</span>
+      <span class="progress-count" id="progress-count">0 / 15 tasks</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progress-bar"></div>
+    </div>
+  </div>
 
-    function RuleRow({ badge, badgeClass, children }) {
-      return (
-        <div className="flex items-center gap-3 text-sm">
-          <span className={`inline-block shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full ${badgeClass}`}>{badge}</span>
-          <span className="text-gray-500">{children}</span>
-        </div>
-      );
-    }
+  <!-- MUST FINISH -->
+  <div class="must-finish">
+    <div class="section-label">🔴 Must Finish Today</div>
+    <div class="task-item" onclick="toggle(this)">
+      <div class="checkbox"></div>
+      <div class="task-text">⚗️ Chemistry — Learn 3 new elements (name, symbol, atomic no.)</div>
+    </div>
+    <div class="task-item" onclick="toggle(this)">
+      <div class="checkbox"></div>
+      <div class="task-text">✍️ Bangla — Complete 2 CQs with full answers</div>
+    </div>
+  </div>
 
-    function App() {
-      const [rangeMin, setRangeMin] = useState(1);
-      const [rangeMax, setRangeMax] = useState(99);
-      const [minInput, setMinInput] = useState("1");
-      const [maxInput, setMaxInput] = useState("99");
+  <!-- CHEMISTRY -->
+  <div class="subject-card chem d1">
+    <div class="subject-header">
+      <div class="subject-icon">⚗️</div>
+      <div>
+        <div class="subject-title">Chemistry</div>
+        <div class="subject-meta">Daily · 3 elements · ~20 min</div>
+      </div>
+      <span class="badge badge-red">Daily</span>
+    </div>
+    <div class="task-item" onclick="toggle(this)">
+      <div class="checkbox"></div>
+      <div class="task-text">Pick the next 3 elements from your list</div>
+    </div>
+    <div class="task-item" onclick="toggle(this)">
+      <div class="checkbox"></div>
+      <div class="task-text">Write: name + symbol + atomic number for each</div>
+    </div>
+    <div class="task-item" onclick="toggle(this)">
+      <div class="checkbox"></div>
+      <div class="task-text">Cover & recall — self-quiz all 3 without looking</div>
+    </div>
+  </div>
 
-      const [lo, setLo] = useState(1);
-      const [hi, setHi] = useState(99);
-      const [count, setCount] = useState(0);
-      const [done, setDone] = useState(false);
-      const [history, setHistory] = useState([]);
-      const [secretNum, setSecretNum] = useState(73);
-      const [showFormula, setShowFormula] = useState(true);
-      const [lastHint, setLastHint] = useState(null);
-      const [animKey, setAnimKey] = useState(0);
-      const histRef = useRef(null);
+  <!-- BANGLA -->
+  <div class="subject-card bangla d2">
+    <div class="subject-header">
+      <div class="subject-icon">✍️</div>
+      <div>
+        <div class="subject-title">Bangla</div>
+        <div class="subject-meta">Daily · 2 CQs · ~25 min</div>
+      </div>
+      <span class="badge badge-yellow">Daily</span>
+    </div>
+    <div class="task-item" onclick="toggle(this)">
+      <div class="checkbox"></div>
+      <div class="task-text">Choose 2 CQ passages from your book/notes</div>
+    </div>
+    <div class="task-item" onclick="toggle(this)">
+      <div class="checkbox"></div>
+      <div class="task-text">Write a complete answer for CQ 1</div>
+    </div>
+    <div class="task-item" onclick="toggle(this)">
+      <div class="checkbox"></div>
+      <div class="task-text">Write a complete answer for CQ 2</div>
+    </div>
+  </div>
 
-      const currentGuess = calcGuess(lo, hi);
-      const rangeSize = hi - lo + 1;
-      const maxNeeded = maxGuesses(rangeMax - rangeMin);
+  <!-- BGS -->
+  <div class="subject-card bgs d3">
+    <div class="subject-header">
+      <div class="subject-icon">📘</div>
+      <div>
+        <div class="subject-title">BGS</div>
+        <div class="subject-meta">Weekly · 1 chapter · ~30 min</div>
+      </div>
+      <span class="badge badge-blue">Weekly</span>
+    </div>
+    <div class="task-item" onclick="toggle(this)">
+      <div class="checkbox"></div>
+      <div class="task-text">Check: have you done this week's chapter yet?</div>
+    </div>
+    <div class="task-item" onclick="toggle(this)">
+      <div class="checkbox"></div>
+      <div class="task-text">Read the chapter once through</div>
+    </div>
+    <div class="task-item" onclick="toggle(this)">
+      <div class="checkbox"></div>
+      <div class="task-text">Underline or note the key points</div>
+    </div>
+    <div class="weekly-note">Only do BGS today if you haven't done your chapter this week yet. Skip if already done!</div>
+  </div>
 
-      const nextIfHigher = lo <= hi ? calcGuess(currentGuess + 1, hi) : currentGuess;
-      const nextIfLower  = lo <= hi ? calcGuess(lo, currentGuess - 1) : currentGuess;
+  <!-- RELIGION -->
+  <div class="subject-card religion d3">
+    <div class="subject-header">
+      <div class="subject-icon">🕌</div>
+      <div>
+        <div class="subject-title">Religion</div>
+        <div class="subject-meta">Weekly · 1 chapter · ~25 min</div>
+      </div>
+      <span class="badge badge-green">Weekly</span>
+    </div>
+    <div class="task-item" onclick="toggle(this)">
+      <div class="checkbox"></div>
+      <div class="task-text">Check: have you done this week's chapter yet?</div>
+    </div>
+    <div class="task-item" onclick="toggle(this)">
+      <div class="checkbox"></div>
+      <div class="task-text">Read the chapter carefully</div>
+    </div>
+    <div class="task-item" onclick="toggle(this)">
+      <div class="checkbox"></div>
+      <div class="task-text">Write 3–5 key points to remember</div>
+    </div>
+    <div class="weekly-note">Only do Religion today if you haven't done your chapter this week yet.</div>
+  </div>
 
-      const resetWithRange = useCallback((min, max, secret) => {
-        setLo(min); setHi(max); setCount(0); setDone(false);
-        setHistory([]); setLastHint(null);
-        setAnimKey(k => k + 1);
-        if (secret !== undefined) setSecretNum(secret);
-      }, []);
+  <!-- BIOLOGY -->
+  <div class="subject-card biology d4">
+    <div class="subject-header">
+      <div class="subject-icon">🔬</div>
+      <div>
+        <div class="subject-title">Biology</div>
+        <div class="subject-meta">Weekly · 1 chapter · ~30 min</div>
+      </div>
+      <span class="badge badge-purple">Weekly</span>
+    </div>
+    <div class="task-item" onclick="toggle(this)">
+      <div class="checkbox"></div>
+      <div class="task-text">Check: have you done this week's chapter yet?</div>
+    </div>
+    <div class="task-item" onclick="toggle(this)">
+      <div class="checkbox"></div>
+      <div class="task-text">Read the chapter once through</div>
+    </div>
+    <div class="task-item" onclick="toggle(this)">
+      <div class="checkbox"></div>
+      <div class="task-text">Note diagrams and important terms to memorize</div>
+    </div>
+    <div class="weekly-note">Only do Biology today if you haven't done your chapter this week yet.</div>
+  </div>
 
-      const resetDemo = useCallback(() => {
-        resetWithRange(rangeMin, rangeMax);
-      }, [rangeMin, rangeMax, resetWithRange]);
+  <!-- STUDY ORDER -->
+  <div class="order-section">
+    <div class="section-label" style="color: var(--accent4);">📋 Suggested Study Order</div>
+    <div class="order-list">
+      <div class="order-item">
+        <div class="order-num">1</div>
+        <div class="order-text">⚗️ Chemistry — while your mind is freshest</div>
+        <div class="order-time">15–20 min</div>
+      </div>
+      <div class="order-item">
+        <div class="order-num">2</div>
+        <div class="order-text">✍️ Bangla — creative thinking, still sharp</div>
+        <div class="order-time">20–25 min</div>
+      </div>
+      <div class="order-item">
+        <div class="order-num">3</div>
+        <div class="order-text">📘 / 🕌 / 🔬 BGS or Religion or Biology — whichever is due</div>
+        <div class="order-time">25–30 min</div>
+      </div>
+    </div>
+  </div>
 
-      const applyRange = () => {
-        const min = parseInt(minInput, 10);
-        const max = parseInt(maxInput, 10);
-        if (isNaN(min) || isNaN(max) || min >= max || min < 0 || max > 99999) return;
-        setRangeMin(min); setRangeMax(max);
-        const clamped = Math.min(max - 1, Math.max(min + 1, secretNum));
-        resetWithRange(min, max, clamped);
-      };
+  <!-- MOTIVATION -->
+  <div class="motivation">
+    <div class="motivation-text">
+      "Small steps every day<br>build <span>big results</span> by exam day.<br>You've got this!"
+    </div>
+  </div>
 
-      const handleSecretChange = (val) => {
-        setSecretNum(val);
-        resetWithRange(rangeMin, rangeMax, val);
-      };
+</div>
 
-      useEffect(() => {
-        if (histRef.current) histRef.current.scrollTop = histRef.current.scrollHeight;
-      }, [history]);
+<script>
+  const TOTAL_TASKS = 15;
 
-      const doStep = (hint) => {
-        if (done) return;
-        const g = currentGuess;
-        const newCount = count + 1;
-        let next = null, newLo = lo, newHi = hi;
-        if (hint === "higher") { newLo = g + 1; next = calcGuess(newLo, hi); }
-        else if (hint === "lower") { newHi = g - 1; next = calcGuess(lo, newHi); }
-        setHistory(prev => [...prev, { guess: g, hint, nextGuess: next, guessNumber: newCount, lo, hi }]);
-        setCount(newCount); setLastHint(hint); setAnimKey(k => k + 1);
-        if (hint === "correct") { setDone(true); }
-        else if (hint === "higher") { setLo(newLo); }
-        else { setHi(newHi); }
-      };
+  function toggle(el) {
+    el.classList.toggle('done');
+    updateProgress();
+  }
 
-      const span = rangeMax - rangeMin || 1;
-      const fillLeft    = ((lo - rangeMin) / span) * 100;
-      const fillWidth   = ((hi - lo) / span) * 100;
-      const guessPos    = ((currentGuess - rangeMin) / span) * 100;
-      const nextHiPos   = ((nextIfHigher - rangeMin) / span) * 100;
-      const nextLoPos   = ((nextIfLower  - rangeMin) / span) * 100;
+  function updateProgress() {
+    const done = document.querySelectorAll('.task-item.done').length;
+    const pct = Math.round((done / TOTAL_TASKS) * 100);
+    document.getElementById('progress-bar').style.width = pct + '%';
+    document.getElementById('progress-count').textContent = done + ' / ' + TOTAL_TASKS + ' tasks';
+  }
 
-      const minInvalid = (() => {
-        const mn = parseInt(minInput, 10), mx = parseInt(maxInput, 10);
-        return isNaN(mn) || isNaN(mx) || mn >= mx || mn < 0 || mx > 99999;
-      })();
+  function copyText() {
+    const text = `📅 Daily Study To-Do List — May 16, 2026
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-      return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
+🔴 MUST FINISH TODAY
+☐ Chemistry — Learn 3 new elements (name, symbol, atomic no.)
+☐ Bangla — Write 2 CQs with full answers
 
-          {/* Header */}
-          <header className="border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
-            <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
-              <div>
-                <h1 className="text-lg font-semibold text-gray-900 tracking-tight">Binary Search</h1>
-                <p className="text-xs text-gray-500">Interactive Learning Demo</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={resetDemo}
-                  className="text-xs font-medium bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 rounded-md px-3 py-1.5 transition-colors"
-                >Reset</button>
-                <button
-                  onClick={() => setShowFormula(v => !v)}
-                  className="text-xs text-gray-500 hover:text-gray-900 border border-gray-200 rounded-md px-3 py-1.5 bg-white hover:bg-gray-50 transition-colors"
-                >{showFormula ? "Hide" : "Show"} Formula</button>
-              </div>
-            </div>
-          </header>
+⚗️ CHEMISTRY (Daily · ~20 min)
+☐ Pick the next 3 elements from your list
+☐ Write: name + symbol + atomic number for each
+☐ Cover & recall — self-quiz all 3
 
-          <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6 space-y-4">
+✍️ BANGLA (Daily · ~25 min)
+☐ Choose 2 CQ passages
+☐ Write a complete answer for CQ 1
+☐ Write a complete answer for CQ 2
 
-            {/* Formula banner */}
-            {showFormula && (
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                <div className="text-xs font-medium text-blue-700 mb-1 uppercase tracking-wider">The One Formula</div>
-                <div className="text-2xl font-bold text-gray-900 font-mono mb-2">next guess = (low + high) / 2</div>
-                <p className="text-xs text-gray-500 leading-relaxed">
-                  <span className="text-gray-800 font-medium">low</span> = smallest number still possible &nbsp;&bull;&nbsp;
-                  <span className="text-gray-800 font-medium">high</span> = largest number still possible.
-                  After each hint, update one boundary and recalculate.
-                </p>
-              </div>
-            )}
+📘 BGS (Weekly · ~30 min — only if not done this week)
+☐ Check: have you done this week's chapter yet?
+☐ Read the chapter once through
+☐ Underline or note the key points
 
-            {/* Main card */}
-            <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-              <div className="px-5 py-4 border-b border-gray-100 space-y-3">
-                {/* Range inputs */}
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs text-gray-500 whitespace-nowrap">Range:</span>
-                  <input
-                    type="number" value={minInput} min={0} max={99998}
-                    onChange={e => setMinInput(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && applyRange()}
-                    className="w-20 text-center text-sm font-medium bg-gray-100 border border-gray-200 rounded-md px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 tabular-nums"
-                  />
-                  <span className="text-xs text-gray-500">to</span>
-                  <input
-                    type="number" value={maxInput} min={1} max={99999}
-                    onChange={e => setMaxInput(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && applyRange()}
-                    className="w-24 text-center text-sm font-medium bg-gray-100 border border-gray-200 rounded-md px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 tabular-nums"
-                  />
-                  <button
-                    onClick={applyRange} disabled={minInvalid}
-                    className="text-xs font-semibold bg-blue-700 text-white rounded-md px-3 py-1.5 hover:bg-blue-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                  >Apply</button>
-                  {minInvalid && <span className="text-xs text-red-500">min &lt; max, max ≤ 99999</span>}
-                </div>
-                {/* Secret slider */}
-                <div className="flex items-center gap-3">
-                  <label className="text-xs text-gray-500 whitespace-nowrap">Secret #:</label>
-                  <input
-                    type="range" min={rangeMin} max={rangeMax} value={secretNum} step={1}
-                    onChange={e => handleSecretChange(Number(e.target.value))}
-                    className="flex-1 h-1.5 rounded-full"
-                  />
-                  <span className="text-sm font-bold text-blue-700 min-w-[36px] text-right tabular-nums">{secretNum}</span>
-                </div>
-              </div>
+🕌 RELIGION (Weekly · ~25 min — only if not done this week)
+☐ Check: have you done this week's chapter yet?
+☐ Read the chapter carefully
+☐ Write 3–5 key points to remember
 
-              <div className="px-5 py-4">
-                {/* Range bar */}
-                <div className="mb-5">
-                  <div className="flex justify-between text-xs mb-1.5">
-                    <span className="font-medium text-gray-900">{rangeMin}</span>
-                    <span className="text-gray-500">
-                      possible range &nbsp;
-                      <span className="text-gray-800 font-medium tabular-nums">{lo}–{hi}</span>
-                    </span>
-                    <span className="font-medium text-gray-900">{rangeMax}</span>
-                  </div>
-                  <div className="relative h-9 bg-gray-100 rounded-lg border border-gray-200" style={{overflow:'hidden'}}>
-                    {/* Fill */}
-                    <div
-                      className="absolute top-0 h-full bg-blue-100 transition-all duration-300 ease-out rounded-lg"
-                      style={{ left: `${fillLeft}%`, width: `${Math.max(fillWidth, 0)}%` }}
-                    />
-                    {/* Ghost lower */}
-                    {!done && currentGuess > lo && (
-                      <div className="absolute top-1 w-px bg-red-300" style={{ left: `calc(${nextLoPos}% - 0.5px)`, height: 'calc(100% - 8px)' }} />
-                    )}
-                    {/* Ghost higher */}
-                    {!done && currentGuess < hi && (
-                      <div className="absolute top-1 w-px bg-emerald-300" style={{ left: `calc(${nextHiPos}% - 0.5px)`, height: 'calc(100% - 8px)' }} />
-                    )}
-                    {/* Current guess line */}
-                    <div className="absolute top-0 h-full w-0.5 bg-blue-700 transition-all duration-300 ease-out" style={{ left: `calc(${guessPos}% - 1px)` }} />
-                    {/* Chip */}
-                    <div
-                      className="absolute top-1/2 z-10 transition-all duration-300 ease-out"
-                      style={{ left: `${guessPos}%`, transform: 'translate(-50%, -50%)' }}
-                    >
-                      <div className="bg-blue-700 text-white text-[10px] font-bold rounded px-1.5 py-0.5 whitespace-nowrap shadow-sm">
-                        {currentGuess}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+🔬 BIOLOGY (Weekly · ~30 min — only if not done this week)
+☐ Check: have you done this week's chapter yet?
+☐ Read the chapter once through
+☐ Note diagrams and important terms
 
-                {/* Current guess */}
-                <div className="flex items-baseline gap-3 mb-4">
-                  <span className="text-4xl font-bold text-gray-900 tabular-nums">{currentGuess}</span>
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-sm text-gray-500">is the current guess</span>
-                    <span className="text-xs text-gray-500 font-mono bg-gray-100 px-2 py-0.5 rounded">
-                      ({lo} + {hi}) / 2 = {currentGuess}
-                    </span>
-                  </div>
-                  {lastHint && !done && <HintBadge hint={lastHint} />}
-                  {done && <span className="inline-flex items-center bg-emerald-100 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full">Found!</span>}
-                </div>
+📋 SUGGESTED ORDER
+1️⃣ Chemistry (15–20 min)
+2️⃣ Bangla (20–25 min)
+3️⃣ BGS / Religion / Biology — whichever is due (25–30 min)
 
-                {/* Metrics */}
-                <div className="grid grid-cols-3 gap-3 mb-4">
-                  <Metric label="Guess #"    value={done ? count : count + 1} blue={true} />
-                  <Metric label="Range left" value={done ? 1 : rangeSize}     blue={true} />
-                  <Metric label="Max needed" value={maxNeeded}                 blue={false} />
-                </div>
+💛 "Small steps every day build big results by exam day. You've got this!"`;
 
-                {/* Buttons */}
-                {!done ? (
-                  <div className="space-y-2">
-                    <p className="text-xs text-gray-500 font-medium">
-                      Is the secret number higher, lower, or equal to <span className="text-gray-900 font-bold">{currentGuess}</span>?
-                    </p>
-                    <div className="grid grid-cols-3 gap-2">
-                      <button
-                        onClick={() => doStep("lower")}
-                        disabled={currentGuess <= lo}
-                        className="flex flex-col items-center gap-0.5 bg-red-50 text-red-700 border border-red-200 rounded-xl px-3 py-3 font-medium hover:bg-red-100 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                      >
-                        <span className="text-lg leading-none">←</span>
-                        <span className="text-sm font-semibold">Lower</span>
-                        <span className="text-xs opacity-70">{currentGuess > lo ? `next: ${nextIfLower}` : "at min"}</span>
-                      </button>
-                      <button
-                        onClick={() => doStep("correct")}
-                        className="flex flex-col items-center gap-0.5 bg-blue-700 text-white rounded-xl px-3 py-3 font-semibold hover:bg-blue-800 transition-all shadow-sm"
-                      >
-                        <span className="text-lg leading-none">✓</span>
-                        <span className="text-sm font-semibold">Correct!</span>
-                        <span className="text-xs opacity-70">that's it</span>
-                      </button>
-                      <button
-                        onClick={() => doStep("higher")}
-                        disabled={currentGuess >= hi}
-                        className="flex flex-col items-center gap-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl px-3 py-3 font-medium hover:bg-emerald-100 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                      >
-                        <span className="text-lg leading-none">→</span>
-                        <span className="text-sm font-semibold">Higher</span>
-                        <span className="text-xs opacity-70">{currentGuess < hi ? `next: ${nextIfHigher}` : "at max"}</span>
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-4 text-center">
-                    <div className="text-emerald-700 font-semibold text-base mb-0.5">
-                      Found in {count} guess{count !== 1 ? "es" : ""}!
-                    </div>
-                    <div className="text-emerald-600 text-xs mb-3">
-                      Binary search always wins in at most {maxNeeded} guesses for this range.
-                    </div>
-                    <button
-                      onClick={resetDemo}
-                      className="bg-emerald-600 text-white text-sm font-semibold px-5 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
-                    >Play again</button>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* History */}
-            {history.length > 0 && (
-              <div className="bg-white border border-gray-200 rounded-xl shadow-sm">
-                <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-900">Guess History</span>
-                  <span className="text-xs text-gray-500">{history.length} guess{history.length !== 1 ? "es" : ""}</span>
-                </div>
-                <div ref={histRef} className="px-5 py-3 max-h-52 overflow-y-auto space-y-2">
-                  {history.map((record, i) => (
-                    <div key={i} className="flex items-center gap-3 text-sm">
-                      <span className="text-xs text-gray-400 w-7 shrink-0">#{record.guessNumber}</span>
-                      <span className="font-bold text-gray-900 text-base w-10 shrink-0 tabular-nums">{record.guess}</span>
-                      <HintBadge hint={record.hint} />
-                      {record.nextGuess !== null && record.hint !== "correct" && (
-                        <span className="text-xs text-gray-400">
-                          → <span className="font-medium text-gray-700">{record.nextGuess}</span>
-                        </span>
-                      )}
-                      <span className="text-xs text-gray-400 ml-auto font-mono">[{record.lo}–{record.hi}]</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Rules */}
-            <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-5 py-4">
-              <div className="text-sm font-medium text-gray-900 mb-3">Rules after each answer</div>
-              <div className="space-y-2.5">
-                <RuleRow badge="Higher →" badgeClass="bg-emerald-100 text-emerald-700">
-                  set <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs font-mono text-gray-800">low = guess + 1</code>, then recalculate
-                </RuleRow>
-                <RuleRow badge="← Lower" badgeClass="bg-red-100 text-red-700">
-                  set <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs font-mono text-gray-800">high = guess - 1</code>, then recalculate
-                </RuleRow>
-                <RuleRow badge="Correct" badgeClass="bg-blue-100 text-blue-700">
-                  You win. Max <strong className="font-semibold text-gray-900">{maxNeeded} guesses</strong> for this range, guaranteed.
-                </RuleRow>
-              </div>
-            </div>
-
-            {/* Why it works */}
-            <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-5 py-4">
-              <div className="text-sm font-medium text-gray-900 mb-1">Why does this work?</div>
-              <p className="text-xs text-gray-500 leading-relaxed">
-                Every guess cuts the remaining range in half. For a range of <span className="text-gray-800 font-medium">{rangeMax - rangeMin + 1}</span> numbers,
-                binary search always finds the answer in at most <span className="text-gray-800 font-semibold">{maxNeeded}</span> guesses — no matter what.
-              </p>
-              <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1 items-end">
-                {Array.from({ length: maxNeeded + 1 }, (_, i) => {
-                  const remaining = Math.ceil((rangeMax - rangeMin + 1) / Math.pow(2, i));
-                  return (
-                    <div key={i} className="flex flex-col items-center shrink-0">
-                      <div
-                        className="w-7 bg-blue-100 rounded-sm border border-blue-200"
-                        style={{ height: `${Math.max(3, (remaining / (rangeMax - rangeMin + 1)) * 52)}px` }}
-                      />
-                      <div className="text-[10px] text-gray-400 mt-1 tabular-nums">{remaining}</div>
-                      <div className="text-[9px] text-gray-300">G{i + 1}</div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-          </main>
-        </div>
-      );
-    }
-
-    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-  </script>
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+      btn.style.color = 'var(--accent3)';
+      btn.style.borderColor = 'var(--accent3)';
+      setTimeout(() => {
+        btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy`;
+        btn.style.color = '';
+        btn.style.borderColor = '';
+      }, 2000);
+    });
+  }
+</script>
 </body>
 </html>
